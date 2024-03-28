@@ -135,8 +135,31 @@ def test_fit(attributes_names, x_train, y_train):
     id3 = ID3(attributes_names)
     id3.fit(x_train, y_train)
     helper_print_tree(id3.tree_root, "root")
-    
 
+
+def test_predict_sample(attributes_names, x_train, y_train, x_test):
+    print("################################## test_predict_sample")
+    id3 = ID3(attributes_names)
+
+    # Keep first 10 people and only first 3 features for simplicity in testing
+    rows = np.array(x_train[0:10, 0:3]) 
+    labels = np.array(y_train[0:10])
+    id3.fit(rows, labels)
+
+    # Lets get the first person from the "test.csv"
+    sample = np.array(x_test[0][0:3])
+    print(f"Person data: {sample}")
+
+    # Lets predict what their diagnosis is
+    prediction = id3.predict_sample(sample)
+    print(f"Prediction: {prediction}")
+
+'''
+Person data: [12.46 19.89 80.43]
+At node where feature_2. Our value 80.43 >= 90.86 ? False
+At node where feature_1. Our value 19.89 >= 16.02 ? True
+At leaf, returning B
+'''
 
 if __name__ == '__main__':
 
@@ -157,4 +180,5 @@ if __name__ == '__main__':
     test_partition(attributes_names, x_train, y_train)
     test_find_best_split(attributes_names, x_train, y_train)
     test_build_tree(attributes_names, x_train, y_train)
-    test_fit(attributes_names, x_train, y_train)
+    # test_fit(attributes_names, x_train, y_train)
+    test_predict_sample(attributes_names, x_train, y_train, x_test)

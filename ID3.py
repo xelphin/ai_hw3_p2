@@ -207,7 +207,7 @@ class ID3:
         :param x_train: A labeled training data.
         :param y_train: training data labels.
         """
-        # TODO: Build the tree that fits the input data and save the root to self.tree_root
+        # Build the tree that fits the input data and save the root to self.tree_root
 
         # ====== YOUR CODE: ======
         root = self.build_tree(x_train, y_train)
@@ -220,7 +220,7 @@ class ID3:
         :param row: vector of shape (1,D).
         :return: The row prediction.
         """
-        # TODO: Implement ID3 class prediction for set of data.
+        # Implement ID3 class prediction for set of data.
         #   - Decide whether to follow the true-branch or the false-branch.
         #   - Compare the feature / value stored in the node, to the example we're considering.
 
@@ -229,7 +229,22 @@ class ID3:
         prediction = None
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        # Case leaf
+        if isinstance(node, Leaf):
+            if len(node.predictions.keys()) == 0:
+                return None
+            print(f"At leaf, returning {list(node.predictions.keys())[0]}")
+            return list(node.predictions.keys())[0]
+        
+        # Otherwise is DecisionNode
+        feature_index = node.question.column_idx
+        threshold_value = node.question.value
+        our_value = row[feature_index]
+        we_pass_question = our_value >= threshold_value
+        # print(f"At node where feature_{feature_index}. Our value {our_value} >= {threshold_value} ? {we_pass_question}")
+        if we_pass_question:
+            return self.predict_sample(row, node.true_branch)
+        return self.predict_sample(row, node.false_branch)
         # ========================
 
         return prediction
