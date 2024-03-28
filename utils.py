@@ -42,7 +42,10 @@ def accuracy(y: np.array, y_pred: np.array):
     assert y.ndim == 1
 
     # ====== YOUR CODE: ======
-    raise NotImplementedError
+    # print(f"y = {y}, y_pred = {y_pred}")
+    elements_same_aux = y == y_pred
+    elements_same = np.sum(elements_same_aux)
+    accuracy_val = (elements_same/y.size)
     # ========================
 
     return accuracy_val
