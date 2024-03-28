@@ -32,7 +32,15 @@ class ID3:
         impurity = 0.0
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        # Entropy of X = H(x) = -sum(p(x_i)*log_2(p(x_i)))
+        # p(x_i) of a node: (# objects of classification i in node)/(# objects in node)
+        # print(f"counts = {counts}")
+        amount_elems = rows.size
+        for label in counts:
+            p_label = counts[label]/amount_elems
+            # print(f"p_{label} = {p_label}  , therefore add {-p_label*math.log2(p_label)}")
+            impurity -= p_label*math.log2(p_label)
+            
         # ========================
 
         return impurity
