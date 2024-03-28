@@ -83,7 +83,6 @@ class ID3:
         :param current_uncertainty: the current uncertainty of the current node
         :return: Tuple of (gain, true_rows, true_labels, false_rows, false_labels)
         """
-        # TODO:
         #   - For each row in the dataset, check if it matches the question.
         #   - If so, add it to 'true rows', otherwise, add it to 'false rows'.
         #   - Calculate the info gain using the `info_gain` method.
@@ -113,6 +112,15 @@ class ID3:
         # ========================
 
         return gain, true_rows, true_labels, false_rows, false_labels
+    
+    def helper_create_threshold_array(self, arr):
+        thresholds = np.array([])
+
+        for i in range(0, arr.shape[0]-1):
+            threshold_val = (arr[i]+arr[i+1])/2
+            thresholds = np.append(thresholds, threshold_val)
+
+        return thresholds
 
     def find_best_split(self, rows, labels):
         """
@@ -121,7 +129,6 @@ class ID3:
         :param labels: rows data labels.
         :return: Tuple of (best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels)
         """
-        # TODO:
         #   - For each feature of the dataset, build a proper question to partition the dataset using this feature.
         #   - find the best feature to split the data. (using the `partition` method)
         best_gain = - math.inf  # keep track of the best information gain
@@ -131,7 +138,33 @@ class ID3:
         current_uncertainty = self.entropy(rows, labels)
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        
+        if rows.shape[0] <= 1:
+            # TODO (case only 1 or less people, how do you split?)
+            return best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels
+
+        # Iterate over features
+        for feature_index in range(0, rows.shape[1]):
+            # Get all people's value for that index to get thresholds
+            peoples_values = np.sort(rows[:, feature_index])
+            thresholds = self.helper_create_threshold_array(peoples_values)
+            # print(f"feature_{feature_index} threshold: {thresholds}")
+            # Iterate over thesholds
+            for threshold in thresholds:
+                # Create question
+                question = Question(f"feature_{feature_index} >= [or whatever name you gave it]", feature_index, threshold)
+                gain, true_rows, true_labels, false_rows, false_labels = self.partition(rows, labels, question, current_uncertainty)
+                if (gain >= best_gain):
+                    best_gain = gain
+                    best_question = question
+                    best_true_rows = true_rows
+                    best_true_labels = true_labels
+                    best_false_rows = false_rows
+                    best_false_labels = false_labels
+                    # print(f"Found better with {question}")
+                    # print(f"True: {class_counts(true_rows, true_labels)}\nFalse: {class_counts(false_rows, false_labels)}")
+                    # print(f"Gain: {best_gain}")
+        
         # ========================
 
         return best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels

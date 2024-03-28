@@ -80,11 +80,24 @@ def test_partition(attributes_names, x_train, y_train):
     gain, true_rows, true_labels, false_rows, false_labels = id3.partition(rows_arr, label_arr, question, parent_entropy)
 
     print(f"Gain: {gain}, amount true {true_rows.shape[0]}, amount false {false_rows.shape[0]}")
-    print(f"True inlcude {class_counts(true_rows, true_labels)}")
-    print(f"False inlcude {class_counts(false_rows, false_labels)}")
+    print(f"True include {class_counts(true_rows, true_labels)}")
+    print(f"False include {class_counts(false_rows, false_labels)}")
     
 
+def test_find_best_split(attributes_names, x_train, y_train):
+    print("################################## find_best_split")
+    id3 = ID3(attributes_names)
 
+    # Keep first 10 people and only first 3 features for simplicity in testing
+    rows = np.array(x_train[0:10, 0:3]) 
+    labels = np.array(y_train[0:10])
+    print(f"Testing on: \n{rows} \nLabels are: \n{labels}")
+    best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels = id3.find_best_split(rows, labels)
+
+    print(f"Best gain {best_gain}")
+    print(f"Best question {best_question}")
+    print(f"True include {class_counts(best_true_rows, best_true_labels)}")
+    print(f"False include {class_counts(best_false_rows, best_false_labels)}")
 
 
 if __name__ == '__main__':
@@ -104,3 +117,4 @@ if __name__ == '__main__':
     test_information_gain_perfect_split(attributes_names, x_train, y_train)
     test_information_gain_good_split(attributes_names, x_train, y_train)
     test_partition(attributes_names, x_train, y_train)
+    test_find_best_split(attributes_names, x_train, y_train)
