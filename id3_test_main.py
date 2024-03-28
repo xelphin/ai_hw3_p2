@@ -18,13 +18,14 @@ def test_initiation(attributes_names):
     print("################################## test_initiation")
     id3 = ID3(attributes_names)
 
-def test_entropy(attributes_names, y_train):
+def test_entropy(attributes_names, x_train, y_train):
     print("################################## test_entropy")
     id3 = ID3(attributes_names)
 
-    # We'll check the entropy of the root node, meaning the node with the entirety of y_train
-    rows_arr = np.array(y_train)
-    label_arr = np.array(y_train)
+    # We'll check the entropy of a node that has the first 10 people
+    rows_arr = np.array(x_train[0:10]) # First 10 people data (excluding diagnosis)
+    label_arr = np.array(y_train[0:10]) # First 10 people diagnosis data
+    print(f"label_arr = {label_arr}")
 
     counts = class_counts(rows_arr, label_arr)
     print(f"counts = {counts}")
@@ -33,15 +34,15 @@ def test_entropy(attributes_names, y_train):
     entropy = id3.entropy(rows_arr, label_arr)
     print(f"Entropy = {entropy}")
 
-def test_information_gain_aux(attributes_names, y_train, full_range, left_side, right_side):
+def test_information_gain_aux(attributes_names, x_train, y_train, full_range, left_side, right_side):
     id3 = ID3(attributes_names)
 
-    # We'll check the IG of perfect split
-    full_rows_arr = np.array(y_train[full_range[0]:full_range[1]])
+    # We'll check the IG of splitting parent to two children: left and right
+    full_rows_arr = np.array(x_train[full_range[0]:full_range[1]])
     full_label_arr = np.array(y_train[full_range[0]:full_range[1]])
-    L_rows_arr = np.array(y_train[left_side[0]:left_side[1]])
+    L_rows_arr = np.array(x_train[left_side[0]:left_side[1]])
     L_label_arr = np.array(y_train[left_side[0]:left_side[1]])
-    R_rows_arr = np.array(y_train[right_side[0]:right_side[1]])
+    R_rows_arr = np.array(x_train[right_side[0]:right_side[1]])
     R_label_arr = np.array(y_train[right_side[0]:right_side[1]])
 
     parent_node_entropy = id3.entropy(full_rows_arr, full_label_arr)
@@ -53,13 +54,34 @@ def test_information_gain_aux(attributes_names, y_train, full_range, left_side, 
     info_gain = id3.info_gain(L_rows_arr, L_label_arr, R_rows_arr, R_label_arr, parent_node_entropy)
     print(f"Info Gain = {info_gain}")
 
-def test_information_gain_perfect_split(attributes_names, y_train):
+def test_information_gain_perfect_split(attributes_names, x_train, y_train):
     print("################################## test_information_gain_perfect_split")
-    test_information_gain_aux(attributes_names, y_train, (0,6), (0,2), (3,6))
+    test_information_gain_aux(attributes_names, x_train, y_train, (0,6), (0,2), (3,6))
 
-def test_information_gain_good_split(attributes_names, y_train):
+def test_information_gain_good_split(attributes_names, x_train,  y_train):
     print("################################## test_information_gain_good_split")
-    test_information_gain_aux(attributes_names, y_train, (0,6), (0,3), (4,6))
+    test_information_gain_aux(attributes_names, x_train, y_train, (0,6), (0,3), (4,6))
+
+def test_partition(attributes_names, x_train, y_train):
+    print("################################## test_partition")
+    id3 = ID3(attributes_names)
+
+    # Lets take the first 12 people's smoothness mean
+    smoothness_mean_col_index = 4
+    rows_arr = np.array(x_train[0:12])
+    label_arr = np.array(y_train[0:12])
+    parent_entropy = id3.entropy(rows_arr, label_arr)
+
+    # Lets make a question "smoothness_mean is >= 0.1"
+    question = Question("smoothness_mean is >= ", smoothness_mean_col_index, 0.1)
+    print(f"Question: {question}")
+
+    # Lets see the partition it brings us
+    gain, true_rows, true_labels, false_rows, false_labels = id3.partition(rows_arr, label_arr, question, parent_entropy)
+
+    print(f"Gain: {gain}, amount true {true_rows.shape[0]}, amount false {false_rows.shape[0]}")
+    print(f"True inlcude {class_counts(true_rows, true_labels)}")
+    print(f"False inlcude {class_counts(false_rows, false_labels)}")
     
 
 
@@ -72,32 +94,13 @@ if __name__ == '__main__':
     target_attribute = 'diagnosis'
     (x_train, y_train, x_test, y_test) = get_dataset_split(train_dataset, test_dataset, target_attribute)
 
-    # print("-------------------------------------------")
-    # print("---------------- INIT DATA ----------------")
-    # print("-------------------------------------------")
-    # print("attributes_names:")
-    # print(attributes_names)
-    # print("x_train")
-    # print(x_train)
-    # print("y_train")
-    # print(y_train)
-    # print("x_test")
-    # print(x_test)
-    # print("y_test")
-    # print(y_test)
-    # print(f"Example in train.csv: Person 0: x_train[0] {x_train[0]}   [The data for Person 0]")
-    # print(f"Example in train.csv: Person 0: y_train[0] {y_train[0]}   [The diagnosis for Person 0]")
-    # print("-------------------------------------------")
-    # print("-------------------------------------------")
-    # print("-------------------------------------------")
-
-
     # Tests
     print("-------------------------------------------")
     print("------------------ TESTS ------------------")
     print("-------------------------------------------")
 
     test_initiation(attributes_names)
-    test_entropy(attributes_names, y_train)
-    test_information_gain_perfect_split(attributes_names, y_train)
-    test_information_gain_good_split(attributes_names, y_train)
+    test_entropy(attributes_names, x_train, y_train)
+    test_information_gain_perfect_split(attributes_names, x_train, y_train)
+    test_information_gain_good_split(attributes_names, x_train, y_train)
+    test_partition(attributes_names, x_train, y_train)

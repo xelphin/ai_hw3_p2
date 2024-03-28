@@ -24,7 +24,6 @@ class ID3:
         :param labels: rows data labels.
         :return: entropy value.
         """
-        # TODO:
         #  Calculate the entropy of the data as shown in the class.
         #  - You can use counts as a helper dictionary of label -> count, or implement something else.
 
@@ -34,7 +33,7 @@ class ID3:
         # ====== YOUR CODE: ======
         # Entropy over set E = H(E) = -sum(p(c_i)*log_2(p(c_i)))
         # p(c_i) of a node: (# objects of class i in node)/(# objects in node)
-        amount_elems = rows.size
+        amount_elems = labels.shape[0]
         for label in counts:
             p_label = counts[label]/amount_elems
             # print(f"p_{label} = {p_label}  , therefore add {-p_label*math.log2(p_label)}")
@@ -53,7 +52,6 @@ class ID3:
         :param current_uncertainty: the current uncertainty of the current node
         :return: the info gain for splitting the current node into the two children left and right.
         """
-        # TODO:
         #  - Calculate the entropy of the data of the left and the right child.
         #  - Calculate the info gain as shown in class.
         assert (len(left) == len(left_labels)) and (len(right) == len(right_labels)), \
@@ -61,14 +59,14 @@ class ID3:
 
         info_gain_value = 0.0
         # ====== YOUR CODE: ======
-        size_of_both = left.size + right.size
+        size_of_both = left_labels.shape[0] + right_labels.shape[0]
         # Subtract left
         left_entropy = self.entropy(left, left_labels)
-        left_size = left.size
+        left_size = left_labels.shape[0]
         left_value = (left_size/size_of_both)*left_entropy
         # Subtract right
         right_entropy = self.entropy(right, right_labels)
-        right_size = right.size
+        right_size = right_labels.shape[0]
         right_value = (right_size/size_of_both)*right_entropy
         # Sum
         info_gain_value += current_uncertainty - left_value - right_value
@@ -94,7 +92,24 @@ class ID3:
         assert len(rows) == len(labels), 'Rows size should be equal to labels size.'
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        true_rows = []
+        true_labels = np.array([])
+        false_rows = []
+        false_labels = np.array([])
+        total_people = rows.shape[0]
+        for person_index in range(0, total_people):
+            if question.match(rows[person_index]):
+                true_rows += [rows[person_index]]
+                true_labels = np.append(true_labels, labels[person_index])
+                # print(f"True: Person{person_index} [{labels[person_index]}]: {rows[person_index]}")
+            else:
+                false_rows += [rows[person_index]]
+                false_labels = np.append(false_labels, labels[person_index])
+                # print(f"False: Person{person_index} [{labels[person_index]}]: {rows[person_index]}")
+
+        true_rows = np.array(true_rows)
+        false_rows = np.array(false_rows)
+        gain = self.info_gain(true_rows, true_labels, false_rows, false_labels, current_uncertainty)
         # ========================
 
         return gain, true_rows, true_labels, false_rows, false_labels
