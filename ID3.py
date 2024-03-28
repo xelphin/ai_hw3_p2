@@ -261,7 +261,12 @@ class ID3:
         y_pred = None
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        amount_samples = rows.shape[0]
+        y_pred = np.full(amount_samples, None)
+        print(f"We have {amount_samples} samples")
+        for i in range(0, amount_samples):
+            prediction = self.predict_sample(rows[i])
+            y_pred[i] = prediction
         # ========================
 
         return y_pred

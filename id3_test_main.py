@@ -96,7 +96,7 @@ def test_find_best_split(attributes_names, x_train, y_train):
     print("################################## find_best_split")
     id3 = ID3(attributes_names)
 
-    # Keep first 10 people and only first 3 features for simplicity in testing
+    # Keep first 10 people and only first 3 features for simplicity in running this function
     rows = np.array(x_train[0:10, 0:3]) 
     labels = np.array(y_train[0:10])
     print(f"Testing on: \n{rows} \nLabels are: \n{labels}")
@@ -111,7 +111,7 @@ def test_build_tree(attributes_names, x_train, y_train):
     print("################################## test_build_tree")
     id3 = ID3(attributes_names)
 
-    # Keep first 10 people and only first 3 features for simplicity in testing
+    # Keep first 10 people and only first 3 features for simplicity in running this function
     rows = np.array(x_train[0:10, 0:3]) 
     labels = np.array(y_train[0:10])
     print(f"Testing on: \n{rows} \nLabels are: \n{labels}")
@@ -141,7 +141,7 @@ def test_predict_sample(attributes_names, x_train, y_train, x_test):
     print("################################## test_predict_sample")
     id3 = ID3(attributes_names)
 
-    # Keep first 10 people and only first 3 features for simplicity in testing
+    # Keep first 10 people and only first 3 features for simplicity in running this function
     rows = np.array(x_train[0:10, 0:3]) 
     labels = np.array(y_train[0:10])
     id3.fit(rows, labels)
@@ -160,6 +160,26 @@ At node where feature_2. Our value 80.43 >= 90.86 ? False
 At node where feature_1. Our value 19.89 >= 16.02 ? True
 At leaf, returning B
 '''
+
+def test_predict(attributes_names, x_train, y_train, x_test, y_test):
+    print("################################## test_predict")
+    id3 = ID3(attributes_names)
+
+    # Keep first 10 people and only first 3 features for simplicity in testing
+    rows = np.array(x_train[0:10, 0:3]) 
+    labels = np.array(y_train[0:10])
+    id3.fit(rows, labels)
+
+    # Lets test out the first 20 people from "test.csv"
+    sample_rows = np.array(x_test[0:20, 0:3]) 
+    sample_predictions = id3.predict(sample_rows)
+    sample_actual = y_test[0:20]
+
+    # We got
+    print(f"Sample predictions = {sample_predictions}")
+    print(f"Sample actual      = {sample_actual}")
+    print(f"Matches = {np.sum(sample_predictions == sample_actual)}")
+
 
 if __name__ == '__main__':
 
@@ -182,3 +202,4 @@ if __name__ == '__main__':
     test_build_tree(attributes_names, x_train, y_train)
     # test_fit(attributes_names, x_train, y_train)
     test_predict_sample(attributes_names, x_train, y_train, x_test)
+    test_predict(attributes_names, x_train, y_train, x_test, y_test)
