@@ -1,5 +1,6 @@
 from ID3 import ID3
 from utils import *
+from DecisonTree import Leaf, Question, DecisionNode, class_counts
 
 
 # File I created to test ID3
@@ -11,18 +12,36 @@ def test_initiation(attributes_names):
     print("################################## test_initiation")
     id3 = ID3(attributes_names)
 
-def test_entropy(attributes_names, x_train):
+def test_entropy(attributes_names, y_train):
     print("################################## test_entropy")
     id3 = ID3(attributes_names)
 
-    arr_perimeter_mean = np.array(x_train[:, 2])
-    label_arr = np.where(arr_perimeter_mean <= 70, "Small", "Large" ) 
-    # print(f"arr_perimeter_mean: min = {min(arr_perimeter_mean)} max = {max(arr_perimeter_mean)}")
+    # We'll check the entropy of the root node, meaning the node with the entirety of y_train
+    rows_arr = np.array(y_train)
+    label_arr = np.array(y_train)
+
+    counts = class_counts(rows_arr, label_arr)
+    print(f"counts = {counts}")
 
     # Check entropy calc
-    entropy = id3.entropy(arr_perimeter_mean, label_arr)
+    entropy = id3.entropy(rows_arr, label_arr)
     print(f"Entropy = {entropy}")
 
+
+def test_information_gain(attributes_names, y_train):
+    print("################################## test_information_gain")
+    id3 = ID3(attributes_names)
+
+    # We'll check the IG of splitting the root into: left node [:100] and right node [100:]
+    L_rows_arr = np.array(y_train[:100])
+    L_label_arr = np.array(y_train[:100])
+    R_rows_arr = np.array(y_train[100:])
+    R_label_arr = np.array(y_train[100:])
+
+    root_entropy = id3.entropy(np.array(y_train), np.array(y_train))
+
+    info_gain = id3.info_gain(L_rows_arr, L_label_arr, R_rows_arr, R_label_arr, root_entropy)
+    print(f"Info Gain = {info_gain}")
 
 
 
@@ -60,4 +79,5 @@ if __name__ == '__main__':
     print("-------------------------------------------")
 
     test_initiation(attributes_names)
-    test_entropy(attributes_names, x_train)
+    test_entropy(attributes_names, y_train)
+    test_information_gain(attributes_names, y_train)

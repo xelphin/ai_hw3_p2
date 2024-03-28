@@ -32,17 +32,14 @@ class ID3:
         impurity = 0.0
 
         # ====== YOUR CODE: ======
-        # Entropy of X = H(x) = -sum(p(x_i)*log_2(p(x_i)))
-        # p(x_i) of a node: (# objects of classification i in node)/(# objects in node)
-        # print(f"counts = {counts}")
+        # Entropy over set E = H(E) = -sum(p(c_i)*log_2(p(c_i)))
+        # p(c_i) of a node: (# objects of class i in node)/(# objects in node)
         amount_elems = rows.size
         for label in counts:
             p_label = counts[label]/amount_elems
             # print(f"p_{label} = {p_label}  , therefore add {-p_label*math.log2(p_label)}")
             impurity -= p_label*math.log2(p_label)
-            
-        # ========================
-
+        
         return impurity
 
     def info_gain(self, left, left_labels, right, right_labels, current_uncertainty):
@@ -64,7 +61,17 @@ class ID3:
 
         info_gain_value = 0.0
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        size_of_both = left.size + right.size
+        # Subtract left
+        left_entropy = self.entropy(left, left_labels)
+        left_size = left.size
+        left_value = (left_size/size_of_both)*left_entropy
+        # Subtract right
+        right_entropy = self.entropy(right, right_labels)
+        right_size = right.size
+        right_value = (right_size/size_of_both)*right_entropy
+        # Sum
+        info_gain_value += current_uncertainty - left_value - right_value
         # ========================
 
         return info_gain_value
