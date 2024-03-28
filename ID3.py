@@ -152,7 +152,7 @@ class ID3:
             # Iterate over thesholds
             for threshold in thresholds:
                 # Create question
-                question = Question(f"feature_{feature_index} >= [or whatever name you gave it]", feature_index, threshold)
+                question = Question(f"feature_{feature_index} >= ", feature_index, threshold)
                 gain, true_rows, true_labels, false_rows, false_labels = self.partition(rows, labels, question, current_uncertainty)
                 if (gain >= best_gain):
                     best_gain = gain
@@ -178,7 +178,6 @@ class ID3:
                 or leaf if we have to prune this branch (in which cases ?)
 
         """
-        # TODO:
         #   - Try partitioning the dataset using the feature that produces the highest gain.
         #   - Recursively build the true, false branches.
         #   - Build the Question node which contains the best question with true_branch, false_branch as children
@@ -186,7 +185,18 @@ class ID3:
         true_branch, false_branch = None, None
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        
+        # Recursion stop condition
+        if len(np.unique(labels)) == 1:
+            # Only one type of label for all people, so return a Leaf
+            return Leaf(rows, labels) # labels shouldn't be empty
+        
+        # Find the best split
+        best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels = self.find_best_split(rows, labels)
+
+        # Create children
+        true_branch = self.build_tree(best_true_rows, best_true_labels)
+        false_branch = self.build_tree(best_false_rows, best_false_labels)
         # ========================
 
         return DecisionNode(best_question, true_branch, false_branch)

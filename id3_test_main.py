@@ -13,6 +13,14 @@ def helper_print_counts_and_entropy(name, rows, labels, id3):
     parent_node_entropy = id3.entropy(rows, labels)
     return f"{name} counts = {parent_counts} therefore, {name} entropy: {parent_node_entropy}"
 
+def helper_print_tree(curr_node, str_path):
+    if (isinstance(curr_node, Leaf)):
+        print(f"{str_path}: is Leaf {isinstance(curr_node, Leaf)} of {curr_node.predictions}")
+        return
+    print(f"{str_path}: feature_{curr_node.question.column_idx} split {curr_node.question.value}")
+    helper_print_tree(curr_node.true_branch, str_path + "->true")
+    helper_print_tree(curr_node.false_branch, str_path + "->false")
+
 
 def test_initiation(attributes_names):
     print("################################## test_initiation")
@@ -99,6 +107,28 @@ def test_find_best_split(attributes_names, x_train, y_train):
     print(f"True include {class_counts(best_true_rows, best_true_labels)}")
     print(f"False include {class_counts(best_false_rows, best_false_labels)}")
 
+def test_build_tree(attributes_names, x_train, y_train):
+    print("################################## test_build_tree")
+    id3 = ID3(attributes_names)
+
+    # Keep first 10 people and only first 3 features for simplicity in testing
+    rows = np.array(x_train[0:10, 0:3]) 
+    labels = np.array(y_train[0:10])
+    print(f"Testing on: \n{rows} \nLabels are: \n{labels}")
+
+    root_node = id3.build_tree(rows, labels)
+    helper_print_tree(root_node, "root")
+
+'''
+Node ['B' 'B' 'M' 'M' 'M' 'M' 'B' 'B' 'B' 'B']: feature_2 split 90.86 -> true ['M' 'M' 'M'] false ['B' 'B' 'M' 'B' 'B' 'B' 'B']
+-LEAF M
+-Node ['B' 'B' 'M' 'B' 'B' 'B' 'B']: feature_1 split 16.02 -> true ['B' 'B' 'B' 'B' 'B'] false ['B' 'M']
+--LEAF B
+--Node ['B' 'M']: feature_2 split 80.59 -> true ['M'] false ['B']
+---LEAF M
+---LEAF B
+'''
+
 
 if __name__ == '__main__':
 
@@ -118,3 +148,4 @@ if __name__ == '__main__':
     test_information_gain_good_split(attributes_names, x_train, y_train)
     test_partition(attributes_names, x_train, y_train)
     test_find_best_split(attributes_names, x_train, y_train)
+    test_build_tree(attributes_names, x_train, y_train)
