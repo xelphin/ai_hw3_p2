@@ -233,7 +233,7 @@ class ID3:
         if isinstance(node, Leaf):
             if len(node.predictions.keys()) == 0:
                 return None
-            print(f"At leaf, returning {list(node.predictions.keys())[0]}")
+            # print(f"At leaf, returning {list(node.predictions.keys())[0]}")
             return list(node.predictions.keys())[0]
         
         # Otherwise is DecisionNode
@@ -263,7 +263,7 @@ class ID3:
         # ====== YOUR CODE: ======
         amount_samples = rows.shape[0]
         y_pred = np.full(amount_samples, None)
-        print(f"We have {amount_samples} samples")
+        # print(f"We have {amount_samples} samples")
         for i in range(0, amount_samples):
             prediction = self.predict_sample(rows[i])
             y_pred[i] = prediction
