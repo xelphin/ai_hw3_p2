@@ -129,6 +129,14 @@ Node ['B' 'B' 'M' 'M' 'M' 'M' 'B' 'B' 'B' 'B']: feature_2 split 90.86 -> true ['
 ---LEAF B
 '''
 
+def test_fit(attributes_names, x_train, y_train):
+    print("################################## test_fit")
+    print("[takes around 20sec...]")
+    id3 = ID3(attributes_names)
+    id3.fit(x_train, y_train)
+    helper_print_tree(id3.tree_root, "root")
+    
+
 
 if __name__ == '__main__':
 
@@ -149,3 +157,4 @@ if __name__ == '__main__':
     test_partition(attributes_names, x_train, y_train)
     test_find_best_split(attributes_names, x_train, y_train)
     test_build_tree(attributes_names, x_train, y_train)
+    test_fit(attributes_names, x_train, y_train)

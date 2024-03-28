@@ -210,7 +210,8 @@ class ID3:
         # TODO: Build the tree that fits the input data and save the root to self.tree_root
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        root = self.build_tree(x_train, y_train)
+        self.tree_root = root
         # ========================
 
     def predict_sample(self, row, node: DecisionNode or Leaf = None):
