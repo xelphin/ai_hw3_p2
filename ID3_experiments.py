@@ -68,9 +68,7 @@ def basic_experiment(x_train, y_train, x_test, y_test, formatted_print=False):
     sample_predictions = id3.predict(x_test)
     # results
     sample_actual = y_test
-    macthes = np.sum(sample_predictions == sample_actual)
-    sample_amount = x_test.shape[0]
-    acc = macthes/sample_amount
+    acc = accuracy(sample_predictions, sample_actual)
     # ========================
 
     assert acc > 0.9, 'you should get an accuracy of at least 90% for the full ID3 decision tree'
