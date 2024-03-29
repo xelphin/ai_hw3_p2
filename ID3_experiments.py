@@ -54,7 +54,6 @@ def basic_experiment(x_train, y_train, x_test, y_test, formatted_print=False):
     Use ID3 model, to train on the training dataset and evaluating the accuracy in the test set.
     """
 
-    # TODO:
     #  - Instate ID3 decision tree instance.
     #  - Fit the tree on the training data set.
     #  - Test the model on the test set (evaluate the accuracy) and print the result.

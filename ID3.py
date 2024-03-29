@@ -191,6 +191,10 @@ class ID3:
             # Only one type of label for all people, so return a Leaf
             return Leaf(rows, labels) # labels shouldn't be empty
         
+        # Min Pruning
+        if rows.shape[0] <= self.min_for_pruning:
+            return Leaf(rows, labels)
+        
         # Find the best split
         best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels = self.find_best_split(rows, labels)
 
@@ -214,6 +218,8 @@ class ID3:
         self.tree_root = root
         # ========================
 
+
+
     def predict_sample(self, row, node: DecisionNode or Leaf = None):
         """
         Predict the most likely class for single sample in subtree of the given node.
@@ -233,8 +239,9 @@ class ID3:
         if isinstance(node, Leaf):
             if len(node.predictions.keys()) == 0:
                 return None
-            # print(f"At leaf, returning {list(node.predictions.keys())[0]}")
-            return list(node.predictions.keys())[0]
+            max_key = max(node.predictions, key=node.predictions.get)
+            # print(f"At leaf {node.predictions}, returning {max_key}")
+            return max_key
         
         # Otherwise is DecisionNode
         feature_index = node.question.column_idx

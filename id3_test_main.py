@@ -13,7 +13,7 @@ def helper_print_counts_and_entropy(name, rows, labels, id3):
     parent_node_entropy = id3.entropy(rows, labels)
     return f"{name} counts = {parent_counts} therefore, {name} entropy: {parent_node_entropy}"
 
-def helper_print_tree(curr_node, str_path):
+def helper_print_tree(curr_node, str_path="root"):
     if (isinstance(curr_node, Leaf)):
         print(f"{str_path}: is Leaf {isinstance(curr_node, Leaf)} of {curr_node.predictions}")
         return
@@ -134,7 +134,7 @@ def test_fit(attributes_names, x_train, y_train):
     print("[takes around 20sec...]")
     id3 = ID3(attributes_names)
     id3.fit(x_train, y_train)
-    helper_print_tree(id3.tree_root, "root")
+    helper_print_tree(id3.tree_root)
 
 
 def test_predict_sample(attributes_names, x_train, y_train, x_test):
@@ -180,6 +180,21 @@ def test_predict(attributes_names, x_train, y_train, x_test, y_test):
     print(f"Sample actual      = {sample_actual}")
     print(f"Matches = {np.sum(sample_predictions == sample_actual)}")
 
+def test_min_for_pruning(attributes_names, x_train, y_train):
+    print("################################## test_predict")
+    id3 = ID3(attributes_names, 4)
+
+    # Keep first 10 people and only first 3 features for simplicity in testing
+    rows = np.array(x_train[0:20, 0:4]) 
+    labels = np.array(y_train[0:20])
+    id3.fit(rows, labels)
+    helper_print_tree(id3.tree_root)
+
+    # Test individual
+    sample = np.array([10,10,10,10]) # root->false->false->false
+    prediction = id3.predict_sample(sample)
+    print(f"Prediction: {prediction}")
+
 
 if __name__ == '__main__':
 
@@ -203,3 +218,4 @@ if __name__ == '__main__':
     # test_fit(attributes_names, x_train, y_train)
     test_predict_sample(attributes_names, x_train, y_train, x_test)
     test_predict(attributes_names, x_train, y_train, x_test, y_test)
+    test_min_for_pruning(attributes_names, x_train, y_train)
