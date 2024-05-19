@@ -85,7 +85,7 @@ def test_partition(attributes_names, x_train, y_train):
     parent_entropy = id3.entropy(rows_arr, label_arr)
 
     # Lets make a question "smoothness_mean is >= 0.1"
-    question = Question("smoothness_mean is >= ", smoothness_mean_col_index, 0.1)
+    question = Question(f"{attributes_names[smoothness_mean_col_index]}", smoothness_mean_col_index, 0.1)
     print(f"Question: {question}")
 
     # Lets see the partition it brings us
@@ -107,7 +107,7 @@ def test_find_best_split(attributes_names, x_train, y_train):
     best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels = id3.find_best_split(rows, labels)
 
     print(f"Best gain {best_gain}")
-    print(f"Best question {best_question} (<-depends on what you named it)") # The name i gave the question "feature_{feature_index} >= " (you'll get a different print otherwise)
+    print(f"Best question {best_question}")
     print(f"True include {class_counts(best_true_rows, best_true_labels)}")
     print(f"False include {class_counts(best_false_rows, best_false_labels)}")
 
@@ -198,14 +198,14 @@ if __name__ == '__main__':
     print("------------------ TESTS ------------------")
     print("-------------------------------------------")
 
-    # test_initiation(attributes_names)
-    # test_entropy(attributes_names, x_train, y_train)
-    # test_information_gain_1(attributes_names, x_train, y_train)
-    # test_information_gain_2(attributes_names, x_train, y_train)
-    # test_partition(attributes_names, x_train, y_train)
+    test_initiation(attributes_names)
+    test_entropy(attributes_names, x_train, y_train)
+    test_information_gain_1(attributes_names, x_train, y_train)
+    test_information_gain_2(attributes_names, x_train, y_train)
+    test_partition(attributes_names, x_train, y_train)
     test_find_best_split(attributes_names, x_train, y_train)
-    # test_build_tree(attributes_names, x_train, y_train)
-    # test_fit(attributes_names, x_train, y_train)
-    # test_predict_sample(attributes_names, x_train, y_train, x_test)
-    # test_predict(attributes_names, x_train, y_train, x_test, y_test)
-    # test_min_for_pruning(attributes_names, x_train, y_train)
+    test_build_tree(attributes_names, x_train, y_train)
+    test_fit(attributes_names, x_train, y_train)
+    test_predict_sample(attributes_names, x_train, y_train, x_test)
+    test_predict(attributes_names, x_train, y_train, x_test, y_test)
+    test_min_for_pruning(attributes_names, x_train, y_train)

@@ -152,7 +152,7 @@ class ID3:
             # Iterate over thesholds
             for threshold in thresholds:
                 # Create question
-                question = Question(f"feature_{feature_index} >= ", feature_index, threshold)
+                question = Question(f"{self.label_names[feature_index]}", feature_index, threshold)
                 gain, true_rows, true_labels, false_rows, false_labels = self.partition(rows, labels, question, current_uncertainty)
                 if (gain >= best_gain):
                     best_gain = gain
