@@ -4,7 +4,7 @@ from utils import *
 """
 Make the imports of python packages needed
 """
-
+import sklearn.model_selection
 """
 ========================================================================
 ========================================================================
@@ -39,7 +39,33 @@ def find_best_pruning_m(train_dataset: np.array, m_choices, num_folds=5):
         #  or implement something else.
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        amount_split = 5
+        x_all = np.array(train_dataset.drop(target_attribute, axis=1).copy())
+        y_all = np.array(train_dataset[target_attribute].copy())
+        kf = sklearn.model_selection.KFold(n_splits=amount_split, random_state=209888809, shuffle=True)
+        sum_error_for_m = 0
+        for j, (train_index, test_index) in enumerate(kf.split(x_all)):
+            # Get data
+            x_train = x_all[train_index]
+            y_train = y_all[train_index]
+            x_test = x_all[test_index]
+            y_test = y_all[test_index]
+            # Train
+            model.fit(x_train, y_train)
+            # Test
+            sample_predictions = model.predict(x_test)
+            # Results
+            sample_actual = y_test
+            acc = accuracy(sample_predictions, sample_actual)
+            # Sum error
+            sum_error_for_m += acc
+            # print(f"  [For {m} fold {j} acc {acc}]")
+
+        # Put avg error in 
+        avg_error_for_m = sum_error_for_m/amount_split
+        accuracies += [avg_error_for_m]
+        # print(f"For {m} avg error is {avg_error_for_m}")
+
         # ========================
 
     best_m_idx = np.argmax([np.mean(acc) for acc in accuracies])
@@ -91,12 +117,16 @@ def cross_validation_experiment(plot_graph=True):
 
     best_m = None
     accuracies = []
-    m_choices = []
+    m_choices = [2,5,30,40,60] # NOTICE!!! I wrote here
     num_folds = 5
 
     # ====== YOUR CODE: ======
     assert len(m_choices) >= 5, 'fill the m_choices list with  at least 5 different values for M.'
-    raise NotImplementedError
+
+    # Get data
+    attributes_names, train_dataset, test_dataset_WONT_USE = load_data_set('ID3')
+
+    best_m, accuracies = find_best_pruning_m(train_dataset, m_choices)
 
     # ========================
     accuracies_mean = np.array([np.mean(acc) * 100 for acc in accuracies])
@@ -130,7 +160,14 @@ def best_m_test(x_train, y_train, x_test, y_test, min_for_pruning):
     acc = None
 
     # ====== YOUR CODE: ======
-    raise NotImplementedError
+    id3 = ID3(attributes_names, min_for_pruning)
+    # Train
+    id3.fit(x_train, y_train)
+    # Test
+    sample_predictions = id3.predict(x_test)
+    # results
+    sample_actual = y_test
+    acc = accuracy(sample_predictions, sample_actual)
     # ========================
 
     return acc
