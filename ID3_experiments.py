@@ -67,9 +67,16 @@ def find_best_pruning_m(train_dataset: np.array, m_choices, num_folds=5):
         # print(f"For {m} avg error is {avg_error_for_m}")
 
         # ========================
+    best_m = -1
+    acc_max=-1
+    for i in range(len(accuracies)):
+        if accuracies[i] >= acc_max:
+            if m_choices[i]> best_m:
+                best_m = m_choices[i]
 
-    best_m_idx = np.argmax([np.mean(acc) for acc in accuracies])
-    best_m = m_choices[best_m_idx]
+    #best_m_idx = np.argmax([np.mean(acc) for acc in accuracies])
+    #best_m = m_choices[best_m_idx]
+
 
     return best_m, accuracies
 
@@ -117,7 +124,7 @@ def cross_validation_experiment(plot_graph=True):
 
     best_m = None
     accuracies = []
-    m_choices = [2,5,30,40,60] # NOTICE!!! I wrote here
+    m_choices = [0,1,3,4,5] # NOTICE!!! I wrote here
     num_folds = 5
 
     # ====== YOUR CODE: ======
