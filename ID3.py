@@ -31,6 +31,7 @@ class ID3:
         impurity = 0.0
 
         # ====== YOUR CODE: ======
+        labels = np.array(labels)
         # Entropy over set E = H(E) = -sum(p(c_i)*log_2(p(c_i)))
         # p(c_i) of a node: (# objects of class i in node)/(# objects in node)
         amount_elems = labels.shape[0]
@@ -59,6 +60,12 @@ class ID3:
 
         info_gain_value = 0.0
         # ====== YOUR CODE: ======
+
+        left_labels = np.array(left_labels)
+
+        right_labels = np.array(right_labels)
+
+
         size_of_both = left_labels.shape[0] + right_labels.shape[0]
         # Subtract left
         left_entropy = self.entropy(left, left_labels)
@@ -91,6 +98,9 @@ class ID3:
         assert len(rows) == len(labels), 'Rows size should be equal to labels size.'
 
         # ====== YOUR CODE: ======
+        rows = np.array(rows)
+
+
         true_rows = []
         true_labels = np.array([])
         false_rows = []
@@ -114,6 +124,8 @@ class ID3:
         return gain, true_rows, true_labels, false_rows, false_labels
     
     def helper_create_threshold_array(self, arr):
+        arr = np.array(arr)
+        
         thresholds = np.array([])
 
         for i in range(0, arr.shape[0]-1):
@@ -138,6 +150,8 @@ class ID3:
         current_uncertainty = self.entropy(rows, labels)
 
         # ====== YOUR CODE: ======
+
+        rows = np.array(rows)
         
         if rows.shape[0] <= 1:
             # TODO (case only 1 or less people, how do you split?)
@@ -185,7 +199,7 @@ class ID3:
         true_branch, false_branch = None, None
 
         # ====== YOUR CODE: ======
-        
+        rows = np.array(rows)
         # Recursion stop condition
         if len(np.unique(labels)) == 1:
             # Only one type of label for all people, so return a Leaf
@@ -268,6 +282,9 @@ class ID3:
         y_pred = None
 
         # ====== YOUR CODE: ======
+
+        rows = np.array(rows)
+
         amount_samples = rows.shape[0]
         y_pred = np.full(amount_samples, None)
         # print(f"We have {amount_samples} samples")
